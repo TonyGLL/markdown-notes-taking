@@ -5,19 +5,19 @@ postgres:
 	docker compose up -d --build db
 
 stop-postgres:
-	docker stop postgres_markdown_notes_taking
+	docker stop postgres_markdown_notes
 
 createdb:
-	docker exec -it postgres_markdown_notes_taking createdb --username=root --owner=root markdown_notes_taking
+	docker exec -it postgres_markdown_notes createdb --username=root --owner=root markdown_notes
 
 dropdb:
-	docker exec -it postgres_markdown_notes_taking dropdb markdown_notes_taking
+	docker exec -it postgres_markdown_notes dropdb markdown_notes
 
 migrateup:
-	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/markdown_notes_taking?sslmode=disable" -verbose up
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/markdown_notes?sslmode=disable" -verbose up
 
 migratedown:
-	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/markdown_notes_taking?sslmode=disable" -verbose down
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/markdown_notes?sslmode=disable" -verbose down
 
 build:
 	@echo "Building..."

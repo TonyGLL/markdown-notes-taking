@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: postgres_markdown_notes
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: markdown_notes
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - markdown_notes_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        CONFIG_FILE: ${CONFIG_FILE:-dev.env}
+    image: markdown_notes:0.0.1
+    container_name: markdown_notes
+    ports:
+      - '3000:3000'
+    environment:
+      - CONFIG_FILE=${CONFIG_FILE:-dev.env}
+      - DB_SOURCE=postgresql://root:secret@postgres_markdown_notes:5432/markdown_notes?sslmode=disable
+    depends_on:
+      - db
+    networks:
+      - markdown_notes_network
+
+networks:
+  markdown_notes_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
