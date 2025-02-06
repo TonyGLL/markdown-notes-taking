@@ -28,3 +28,37 @@ func (q *Queries) GetNote(ctx context.Context, id string) (string, error) {
 	err := row.Scan(&html)
 	return html, err
 }
+
+const getNotesQuery = `
+	SELECT * FROM markdown_notes_schema.notes n WHERE n.deleted IS NOT TRUE
+`
+
+func (q *Queries) GetNotes(ctx context.Context) ([]Note, error) {
+	rows, err := q.db.QueryContext(ctx, getNotesQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	notes := []Note{}
+	for rows.Next() {
+		var note Note
+		if err := rows.Scan(
+			&note.ID,
+			&note.HTML,
+			&note.MK,
+			&note.CreatedAt,
+			&note.UpdatedAt,
+			&note.Deleted,
+		); err != nil {
+			return nil, err
+		}
+		notes = append(notes, note)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return notes, nil
+}

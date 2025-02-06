@@ -25,7 +25,7 @@ func (server *Server) SetupRoutes(version string) http.Handler {
 	v1 := r.Group("/api/v1")
 	{
 		v1.POST("/upload", server.uploadFile)
-		v1.GET("/notes", server.checkGrammar)
+		v1.GET("/notes", server.getNotes)
 		v1.GET("/render-html/:id", server.getNote)
 		v1.GET("/check-grammar/:id", server.checkGrammar)
 	}

@@ -103,3 +103,18 @@ func (s *Server) getNote(ctx *gin.Context) {
 	ctx.Header("Content-Type", "text/html")
 	ctx.Data(http.StatusOK, "text/html", []byte(htmlFile))
 }
+
+func (s *Server) getNotes(ctx *gin.Context) {
+	notes, err := s.store.GetNotes(ctx)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, notes)
+}
